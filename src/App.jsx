@@ -1,18 +1,18 @@
 import React, { useContext, useEffect } from 'react';
-import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // Add Navigate for redirection
-import Home from "./pages/Home";
-import Appointment from "./pages/Appointment";
-import AboutUs from "./pages/AboutUs";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'; // Add Navigate for redirection
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Navbar from './components/navbar';
-import { Context } from './main';
-import axios from 'axios';
+import "./App.css";
+import axiosInstance from './axios';
 import Footer from './components/footer';
+import Navbar from './components/navbar';
 import PatientAppointments from './components/PatientAppointments';
+import { Context } from './main';
+import AboutUs from "./pages/AboutUs";
+import Appointment from "./pages/Appointment";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const PrivateRoute = ({ isAuthenticated, children }) => {
   return isAuthenticated ? children : <Navigate to="/login" />; // Redirect to login if not authenticated
@@ -24,8 +24,8 @@ const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:4000/api/v1/user/patient/me",
+        const response = await axiosInstance.get(
+          "user/patient/me",
           { withCredentials: true }
         );
         setIsAuthenticated(true);

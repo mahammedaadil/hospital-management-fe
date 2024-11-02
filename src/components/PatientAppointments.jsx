@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../main";
-import { Navigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { GoCheckCircleFill } from "react-icons/go";
 import { AiFillCloseCircle } from "react-icons/ai";
+import { GoCheckCircleFill } from "react-icons/go";
+import { Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axiosInstance from "../axios";
+import { Context } from "../main";
 
 const PatientAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -13,8 +13,8 @@ const PatientAppointments = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:4000/api/v1/appointment/getpatient/${user._id}`,
+        const { data } = await axiosInstance.get(
+          `appointment/getpatient/${user._id}`,
           { withCredentials: true }
         );
         setAppointments(data.appointments);

@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosInstance from "../axios";
 import { Context } from "../main";
 
 const Navbar = () => {
@@ -10,17 +10,21 @@ const Navbar = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
 
   const handleLogout = async () => {
-    await axios
-      .get("http://localhost:4000/api/v1/user/patient/logout", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        toast.success(res.data.message);
-        setIsAuthenticated(false);
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+    localStorage.clear();
+    setIsAuthenticated(false);
+    goToLogin()
+        toast.success('User Logged Out Successfully');
+    // await axiosInstance
+    //   .get("user/patient/logout", {
+    //     withCredentials: true,
+    //   })
+    //   .then((res) => {
+    //     toast.success(res.data.message);
+    //     setIsAuthenticated(false);
+    //   })
+    //   .catch((err) => {
+    //     toast.error(err.response.data.message);
+    //   });
   };
 
   const navigateTo = useNavigate();

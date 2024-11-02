@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Link, useNavigate, Navigate } from "react-router-dom";
+import axiosInstance from "../axios";
 
 const Login = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
@@ -20,9 +21,9 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await axios
+      await axiosInstance
         .post(
-          "http://localhost:4000/api/v1/user/login",
+          "user/login",
           { email, password, confirmPassword, role: "Patient" },
           {
             withCredentials: true,
@@ -36,7 +37,7 @@ const Login = () => {
           setEmail("");
           setPassword("");
           setConfirmPassword("");
-          localStorage.setItem("token");
+          localStorage.setItem("token",res.data.token);
         });
     } catch (error) {
       toast.error(error.response.data.message);
