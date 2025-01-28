@@ -4,19 +4,16 @@ import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import axiosInstance from "../axios";
+import ForgotPassword from "./ForgotPassword";
 
 const Login = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false); // For popup state
 
   const navigateTo = useNavigate();
-  const goApp= () => {
-    navigateTo("/register");
-  };
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,7 +21,7 @@ const Login = () => {
       await axiosInstance
         .post(
           "user/login",
-          { email, password, confirmPassword, role: "Patient" },
+          { email, password, role: "Patient" },
           {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
@@ -36,8 +33,7 @@ const Login = () => {
           navigateTo("/appointment");
           setEmail("");
           setPassword("");
-          setConfirmPassword("");
-          localStorage.setItem("token",res.data.token);
+          localStorage.setItem("token", res.data.token);
         });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -54,8 +50,8 @@ const Login = () => {
         <h2>Login</h2>
         <p>Please Login To Continue</p>
         <p>
-        You Must Have To Login To Take An Appointment 
-        In Our Hospital With Online System.
+          You Must Have To Login To Take An Appointment 
+          In Our Hospital With Online System.
         </p>
         <form onSubmit={handleLogin}>
           <input
@@ -70,14 +66,8 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-       
-          <div
-            style={{
-              gap: "10px",
-              justifyContent: "flex-end",
-              flexDirection: "row",
-            }}
-          >
+          
+          <div className="login-options">
             <p style={{ marginBottom: 0 }}>Not Registered?</p>
             <Link
               to={"/register"}
@@ -86,11 +76,22 @@ const Login = () => {
               Register Now
             </Link>
           </div>
-          <div style={{ justifyContent: "center", alignItems: "center" }}>
+          <div className="button-container">
             <button type="submit">Login</button>
+            <button
+              type="button"
+              className="forgot-password-btn"
+              onClick={() => setShowForgotPassword(true)}
+            >
+              Forgot Password?
+            </button>
           </div>
         </form>
       </div>
+
+      {showForgotPassword && (
+        <ForgotPassword onClose={() => setShowForgotPassword(false)} />
+      )}
     </>
   );
 };
