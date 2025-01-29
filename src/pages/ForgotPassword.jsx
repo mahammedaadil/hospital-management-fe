@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-// Define axiosInstance using environment variable
-const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL, // Fetch base URL from .env file
-});
-
 const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1); // 1: Enter email, 2: Enter OTP, 3: Enter new password
   const [message, setMessage] = useState("");
 
   const handleSendOtp = async () => {
     try {
-      const response = await axiosInstance.post("/forgot-password", { email });
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/user/forgot-password",
+        { email }
+      );
       setMessage(response.data.message);
       setStep(2);
     } catch (error) {
@@ -25,7 +23,10 @@ const ForgotPassword = ({ onClose }) => {
 
   const handleVerifyOtp = async () => {
     try {
-      const response = await axiosInstance.post("/verify-otp", { email, otp });
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/user/verify-otp",
+        { email, otp }
+      );
       setMessage(response.data.message);
       setStep(3);
     } catch (error) {
@@ -35,22 +36,25 @@ const ForgotPassword = ({ onClose }) => {
 
   const handleResetPassword = async () => {
     try {
-      const response = await axiosInstance.post("/reset-password", { email, newPassword });
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/user/reset-password",
+        { email, newPassword }
+      );
       setMessage(response.data.message);
-      onClose(); // Close the popup on successful reset
+      setStep(1); // Reset to initial step
+      onClose(); // Close popup after successful reset
     } catch (error) {
       setMessage(error.response?.data?.message || "Failed to reset password");
     }
   };
 
   return (
-    <div className="popup-overlay">
-      <div className="popup-content">
-        <button className="close-btn" onClick={onClose}>
-          ✖
-        </button>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <button className="close-btn" onClick={onClose}>✖</button>
         <h2>Forgot Password</h2>
         {message && <p>{message}</p>}
+
         {step === 1 && (
           <div>
             <input
@@ -59,9 +63,7 @@ const ForgotPassword = ({ onClose }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <button className="dark-button" onClick={handleSendOtp}>
-              Send OTP
-            </button>
+            <button onClick={handleSendOtp}>Send OTP</button>
           </div>
         )}
         {step === 2 && (
@@ -72,9 +74,7 @@ const ForgotPassword = ({ onClose }) => {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
-            <button className="dark-button" onClick={handleVerifyOtp}>
-              Verify OTP
-            </button>
+            <button onClick={handleVerifyOtp}>Verify OTP</button>
           </div>
         )}
         {step === 3 && (
@@ -85,9 +85,7 @@ const ForgotPassword = ({ onClose }) => {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
-            <button className="dark-button" onClick={handleResetPassword}>
-              Reset Password
-            </button>
+            <button onClick={handleResetPassword}>Reset Password</button>
           </div>
         )}
       </div>

@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../main";
@@ -8,25 +7,19 @@ import ForgotPassword from "./ForgotPassword";
 
 const Login = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showForgotPassword, setShowForgotPassword] = useState(false); // For popup state
-
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigateTo = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await axiosInstance
-        .post(
-          "user/login",
-          { email, password, role: "Patient" },
-          {
-            withCredentials: true,
-            headers: { "Content-Type": "application/json" },
-          }
-        )
+        .post("user/login", { email, password, role: "Patient" }, {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        })
         .then((res) => {
           toast.success(res.data.message);
           setIsAuthenticated(true);
@@ -69,10 +62,7 @@ const Login = () => {
           
           <div className="login-options">
             <p style={{ marginBottom: 0 }}>Not Registered?</p>
-            <Link
-              to={"/register"}
-              style={{ textDecoration: "none", color: "#271776ca" }}
-            >
+            <Link to={"/register"} style={{ textDecoration: "none", color: "#271776ca" }}>
               Register Now
             </Link>
           </div>

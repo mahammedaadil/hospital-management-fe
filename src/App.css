@@ -717,28 +717,29 @@ h5 {
 }
 
 /*forgot password css */
-/* Popup Overlay */
-.popup-overlay {
+/* Modal Overlay */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6); /* Dim background */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow: auto;
 }
 
-/* Popup Content */
-.popup-content {
+/* Modal Content */
+.modal-content {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  width: 400px;
+  width: 350px;
   text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   position: relative;
 }
 
@@ -747,59 +748,84 @@ h5 {
   position: absolute;
   top: 10px;
   right: 15px;
-  background: none;
-  border: none;
   font-size: 18px;
+  border: none;
+  background: none;
+  color: #271776ca;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
-/* Input Fields */
+.close-btn:hover {
+  color: #1f1450;
+}
+
+/* Button Styling */
+button {
+  background: #271776ca;
+  color: white;
+  border: none;
+  padding: 12px;
+  margin-top: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #1f1450;
+}
+
+/* Input Styling */
 input[type="email"],
 input[type="text"],
 input[type="password"] {
   width: 100%;
-  padding: 12px 15px;
-  margin: 10px 0;
+  padding: 10px;
+  margin: 12px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
 }
 
-/* Input Focus */
 input[type="email"]:focus,
 input[type="text"]:focus,
 input[type="password"]:focus {
-  border-color: #271776ca;
   outline: none;
+  border-color: #271776ca;
 }
 
-/* Dark Button */
-.dark-button {
-  background-color: #271776ca;
-  color: #fff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
+/* Message Styling */
+p {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 12px;
+  line-height: 1.5;
 }
 
-.dark-button:hover {
-  background-color: #1a1160;
-}
-
-/* Styling for the Popup Text */
+/* Modal Header */
 h2 {
   color: #271776ca;
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
 }
 
-p {
-  color: #555;
-  font-size: 14px;
-  margin-bottom: 10px;
+/* Special styling for Forgot Password button */
+.forgot-password-btn {
+  background: #f1f1f1;
+  color: #271776ca;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.forgot-password-btn:hover {
+  background: #e5e5e5;
 }
