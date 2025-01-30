@@ -1,92 +1,88 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { toast } from "react-toastify";
+import axiosInstance from "../axios";
+ // Import CSS
 
 const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [step, setStep] = useState(1); // 1: Enter email, 2: Enter OTP, 3: Enter new password
-  const [message, setMessage] = useState("");
+  const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/user/forgot-password",
-        { email }
-      );
-      setMessage(response.data.message);
+      const response = await axiosInstance.post("user/forgot-password", { email });
+      toast.success(response.data.message);
       setStep(2);
     } catch (error) {
-      setMessage(error.response?.data?.message || "An error occurred");
+      toast.error(error.response?.data?.message || "Failed to send OTP");
     }
   };
 
-  const handleVerifyOtp = async () => {
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/user/verify-otp",
-        { email, otp }
-      );
-      setMessage(response.data.message);
+      const response = await axiosInstance.post("user/verify-otp", { email, otp });
+      toast.success(response.data.message);
       setStep(3);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Invalid OTP");
+      toast.error(error.response?.data?.message || "Invalid OTP");
     }
   };
 
-  const handleResetPassword = async () => {
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/user/reset-password",
-        { email, newPassword }
-      );
-      setMessage(response.data.message);
-      setStep(1); // Reset to initial step
-      onClose(); // Close popup after successful reset
+      const response = await axiosInstance.post("user/reset-password", { email, newPassword });
+      toast.success(response.data.message);
+      onClose(); // Close popup after success
     } catch (error) {
-      setMessage(error.response?.data?.message || "Failed to reset password");
+      toast.error(error.response?.data?.message || "Failed to reset password");
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="forgot-password-overlay">
+      <div className="forgot-password-container">
         <button className="close-btn" onClick={onClose}>✖</button>
         <h2>Forgot Password</h2>
-        {message && <p>{message}</p>}
+        <p>Enter your details to reset your password</p>
 
         {step === 1 && (
-          <div>
+          <form className="forgot-password-form" onSubmit={handleSendOtp}>
             <input
               type="email"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <button onClick={handleSendOtp}>Send OTP</button>
-          </div>
+            <button type="submit">Send OTP</button>
+          </form>
         )}
+
         {step === 2 && (
-          <div>
+          <form className="forgot-password-form" onSubmit={handleVerifyOtp}>
             <input
               type="text"
               placeholder="Enter OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
-            <button onClick={handleVerifyOtp}>Verify OTP</button>
-          </div>
+            <button type="submit">Verify OTP</button>
+          </form>
         )}
+
         {step === 3 && (
-          <div>
+          <form className="forgot-password-form" onSubmit={handleResetPassword}>
             <input
               type="password"
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
-            <button onClick={handleResetPassword}>Reset Password</button>
-          </div>
+            <button type="submit">Reset Password</button>
+          </form>
         )}
       </div>
     </div>

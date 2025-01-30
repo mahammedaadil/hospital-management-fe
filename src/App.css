@@ -445,132 +445,102 @@ nav {
   width: 100%;
   margin: 0 auto;
   justify-content: space-between;
-  position: absolute;
   align-items: center;
+  padding: 15px 20px;
+  background: #e5e5e5; /* Light gray background */
   border-bottom-right-radius: 7px;
   border-bottom-left-radius: 7px;
-  padding-top: 20px !important;
-  padding-bottom: 20px !important;
-  z-index: 2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 nav .logo {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem; /* Reduced font size for logo */
-}
-
-nav .navLinks {
-  flex: 2;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #271776ca; /* Retain original logo color */
 }
 
 nav .navLinks {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 20px;
 }
 
 nav .navLinks .links {
   display: flex;
-  gap: 20px; /* Reduced gap between links */
+  gap: 15px;
 }
 
 nav .navLinks .links a {
   text-decoration: none;
-  color: #222;
-  font-size: 16px; /* Reduced font size */
+  color: #222; /* Retain original text color */
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: 1.2px; /* Slightly reduced letter spacing */
+  letter-spacing: 1.2px;
+  transition: color 0.3s ease;
 }
 
 nav .navLinks .links a:hover {
-  color: #000;
-  transition: 0.3s;
+  color: #1f1450;
+}
+
+/* Button Styling for Consistency */
+nav .btn, nav .logoutBtn, nav .loginBtn, nav .registerBtn {
+  background: #271776ca;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+nav .btn:hover, nav .logoutBtn:hover, nav .loginBtn:hover, nav .registerBtn:hover {
+  background: #1f1450;
+}
+
+/* Hamburger Menu for Mobile */
+nav .hamburger {
+  display: none;
   cursor: pointer;
 }
 
-nav .btn {
-  padding: 6px 50px; /* Adjusted padding for buttons */
-  color: #e5e5e5;
-  background: transparent;
-  border: none;
-  border-radius: 20px;
-  font-size: 16px; /* Reduced font size for buttons */
-  font-weight: 600;
-  z-index: 2;
-}
-
-nav .logoutBtn, nav .loginBtn {
-  background: linear-gradient(135deg, black, rgb(49, 49, 49));
-}
-
-nav .hamburger {
-  display: none;
-}
-
 nav svg {
-  font-size: 1.5rem; /* Reduced font size for hamburger icon */
+  font-size: 1.8rem;
+  color: #222;
 }
 
-/* Media Queries */
-@media (max-width: 1520px) {
-  nav {
-    min-width: 100%;
-    padding: 25px 20px 40px 20px;
-  }
-}
-
+/* Responsive Design */
 @media (max-width: 1100px) {
-  nav {
-    background: #ffffffbf;
-    position: fixed;
-    top: 0;
-    left: 0;
-  }
-
   nav .hamburger {
-    display: flex;
+    display: block;
   }
 
   nav .navLinks {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    padding: 15px 7.5px;
-    z-index: 2;
-    transition: 0.3s;
-    position: fixed;
-    left: 0;
-    height: 100%;
-    width: 400px;
-    background: #ffffffbf;
-    top: 79px;
-  }
-
-  nav .showmenu {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    padding: 15px 7.5px;
-    z-index: 2;
-    transition: 0.3s;
     position: fixed;
     left: -100%;
-    width: 400px;
-    height: 100%;
-    background: #ffffffbf;
-    top: 79px;
+    top: 60px;
+    width: 100%;
+    background: #e5e5e5; /* Light gray background */
+    height: 100vh;
+    transition: left 0.3s ease-in-out;
+    padding-top: 20px;
+  }
+
+  nav .navLinks.showmenu {
+    left: 0;
   }
 
   nav .navLinks .links {
     flex-direction: column;
     text-align: center;
-  }
-
-  nav .navLinks .links a {
-    font-weight: 700;
-    font-size: 16px; /* Reduced font size for mobile */
+    gap: 20px;
   }
 
   nav .logoutBtn {
@@ -578,36 +548,27 @@ nav svg {
   }
 }
 
+
 @media (max-width: 800px) {
-  nav .showmenu {
+  nav .navLinks {
     width: 96vw;
   }
 }
 
 @media (max-width: 650px) {
-  nav .showmenu {
-    margin: 0;
+  nav .navLinks {
     width: 100%;
     border-radius: 0;
   }
 }
 
 @media (max-width: 555px) {
-  nav {
-    background: #fff;
-  }
-
-  nav .navLinks {
-    background: #fff;
-    width: 100%;
-  }
-
   nav .navLinks .links a {
-    font-size: 14px; /* Even smaller font size for extra small devices */
+    font-size: 14px;
   }
 
   nav .btn {
-    font-size: 14px; /* Smaller buttons for small screens */
+    font-size: 14px;
   }
 }
 
@@ -717,115 +678,76 @@ h5 {
 }
 
 /*forgot password css */
-/* Modal Overlay */
-.modal-overlay {
+/* ForgotPassword.css */
+.forgot-password-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6); /* Dim background */
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  overflow: auto;
 }
 
-/* Modal Content */
-.modal-content {
+.forgot-password-container {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 350px;
   text-align: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   position: relative;
 }
 
-/* Close Button */
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 18px;
-  border: none;
-  background: none;
-  color: #271776ca;
-  cursor: pointer;
-  transition: color 0.3s ease;
+.forgot-password-container h2 {
+  margin-bottom: 15px;
 }
 
-.close-btn:hover {
-  color: #1f1450;
-}
-
-/* Button Styling */
-button {
-  background: #271776ca;
-  color: white;
-  border: none;
-  padding: 12px;
-  margin-top: 12px;
-  cursor: pointer;
-  border-radius: 5px;
-  width: 100%;
+.forgot-password-container p {
   font-size: 14px;
-  transition: background 0.3s ease;
+  color: #555;
 }
 
-button:hover {
-  background: #1f1450;
+.forgot-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
-/* Input Styling */
-input[type="email"],
-input[type="text"],
-input[type="password"] {
-  width: 100%;
+.forgot-password-form input {
   padding: 10px;
-  margin: 12px 0;
+  width: 100%;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
 }
 
-input[type="email"]:focus,
-input[type="text"]:focus,
-input[type="password"]:focus {
-  outline: none;
-  border-color: #271776ca;
-}
-
-/* Message Styling */
-p {
-  color: #333;
-  font-size: 14px;
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-/* Modal Header */
-h2 {
-  color: #271776ca;
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-/* Special styling for Forgot Password button */
-.forgot-password-btn {
-  background: #f1f1f1;
-  color: #271776ca;
+.forgot-password-form button {
+  background: #271776ca;
+  color: white;
   border: none;
   padding: 10px;
-  margin-top: 10px;
   border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
-  width: 100%;
+  transition: background 0.3s;
 }
 
-.forgot-password-btn:hover {
-  background: #e5e5e5;
+.forgot-password-form button:hover {
+  background: #1f1450;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
 }
