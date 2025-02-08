@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios";
- // Import CSS
+
 
 const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
