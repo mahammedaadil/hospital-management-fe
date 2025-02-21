@@ -12,8 +12,8 @@ const Navbar = () => {
   const handleLogout = async () => {
     localStorage.clear();
     setIsAuthenticated(false);
-    goToLogin()
-        toast.success('User Logged Out Successfully');
+    goToLogin();
+    toast.success('User Logged Out Successfully');
     // await axiosInstance
     //   .get("user/patient/logout", {
     //     withCredentials: true,
@@ -45,9 +45,6 @@ const Navbar = () => {
         </div>
         <div className={show ? "navLinks showmenu" : "navLinks"}>
           <div className="links">
-            <Link to={"/"} onClick={() => setShow(!show)}>
-              Home
-            </Link>
 
             {/* Only show Profile link if user is authenticated */}
             {isAuthenticated && (
@@ -56,10 +53,19 @@ const Navbar = () => {
               </Link>
             )}
 
+            <Link to={"/"} onClick={() => setShow(!show)}>
+              Home
+            </Link>
+
+              <Link to={"/doctors"} onClick={() => setShow(!show)}>
+              Doctors
+            </Link>
+            
             <Link to={"/appointment"} onClick={() => setShow(!show)}>
               Appointment
             </Link>
 
+        
             <Link to={"/about"} onClick={() => setShow(!show)}>
               About Us
             </Link>

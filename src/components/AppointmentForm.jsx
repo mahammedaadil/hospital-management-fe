@@ -17,6 +17,8 @@ const AppointmentForm = () => {
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
   const [timeSlot, setTimeSlot] = useState("");
+  const [doctors, setDoctors] = useState([]);
+  const [doctorAvailability, setDoctorAvailability] = useState([]);
 
   const departmentsArray = [
     "Pediatrics",
@@ -30,49 +32,54 @@ const AppointmentForm = () => {
     "ENT",
   ];
 
+  // Updated time slots to half-hour intervals
   const timeSlots = [
-    "10:00-10:30",
-    "10:30-11:00",
-    "11:00-11:30",
-    "11:30-12:00",
-    "12:00-12:30",
-    "12:30-13:00",
-    "13:00-13:30",
-    "13:30-14:00",
-    "14:00-14:30",
-    "14:30-15:00",
-    "15:00-15:30",
-    "15:30-16:00",
-    "16:00-16:30",
-    "16:30-17:00",
-    "17:00-17:30",
-    "17:30-18:00",
-    "18:00-18:30",
-    "18:30-19:00",
-    "19:00-19:30",
-    "19:30-20:00",
-    "20:00-20:30",
-    "20:30-21:00",
-    "21:00-21:30",
-    "21:30-22:00",
-    "22:00-22:30",
-    "22:30-23:00"
+    "09:00-09:30", "09:30-10:00",
+    "10:00-10:30", "10:30-11:00",
+    "11:00-11:30", "11:30-12:00",
+    "12:00-12:30", "12:30-01:00",
+    "14:00-14:30", "14:30-15:00",
+    "15:00-15:30", "15:30-16:00",
+    "16:00-16:30", "16:30-17:00",
+    "17:00-17:30", "17:30-18:00",
+    "18:00-18:30", "18:30-19:00",
+    "19:00-19:30", "19:30-20:00",
   ];
-  
 
   const navigateTo = useNavigate();
-  const [doctors, setDoctors] = useState([]);
 
+  // Fetch doctors
   useEffect(() => {
     const fetchDoctors = async () => {
-      const { data } = await axiosInstance.get(
-        "user/doctors",
-        { withCredentials: true }
-      );
-      setDoctors(data.doctors);
+      try {
+        const { data } = await axiosInstance.get("user/doctors", {
+          withCredentials: true,
+        });
+        setDoctors(data.doctors);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+        toast.error("Failed to load doctors.");
+      }
     };
     fetchDoctors();
   }, []);
+
+  const handleDoctorChange = (e) => {
+    const [firstName, lastName] = e.target.value.split(" ");
+    setDoctorFirstName(firstName);
+    setDoctorLastName(lastName);
+
+    // Find selected doctor to get availability
+    const selectedDoctor = doctors.find(
+      (doctor) =>
+        doctor.firstName === firstName && doctor.lastName === lastName
+    );
+
+    if (selectedDoctor) {
+      setDoctorAvailability(selectedDoctor.doctorAvailability || []); // Set doctor's availability
+      setTimeSlot(""); // Reset time slot
+    }
+  };
 
   const handleAppointment = async (e) => {
     e.preventDefault();
@@ -101,10 +108,29 @@ const AppointmentForm = () => {
         }
       );
       toast.success(data.message);
-      navigateTo("/");
+      navigateTo("/"); // Redirect after appointment creation
     } catch (error) {
       toast.error(error.response.data.message);
     }
+  };
+
+  const getAvailableTimeSlots = () => {
+    if (!appointmentDate || doctorAvailability.length === 0) return []; // Return empty array if no availability
+
+    const selectedDay = new Date(appointmentDate).toLocaleString("en-us", {
+      weekday: "long",
+    });
+
+    // Filter the doctor's availability for the selected day
+    const availability = doctorAvailability.find(
+      (avail) => avail.day === selectedDay
+    );
+
+    if (availability) {
+      // Ensure the timings available match the half-hour slots structure
+      return timeSlots.filter((slot) => availability.timings.includes(slot));
+    }
+    return [];
   };
 
   return (
@@ -158,17 +184,6 @@ const AppointmentForm = () => {
             value={appointmentDate}
             onChange={(e) => setAppointmentDate(e.target.value)}
           />
-          <select
-            value={timeSlot}
-            onChange={(e) => setTimeSlot(e.target.value)}
-          >
-            <option value="">Select Time Slot</option>
-            {timeSlots.map((slot, index) => (
-              <option value={slot} key={index}>
-                {slot}
-              </option>
-            ))}
-          </select>
         </div>
         <div>
           <select
@@ -177,23 +192,19 @@ const AppointmentForm = () => {
               setDepartment(e.target.value);
               setDoctorFirstName("");
               setDoctorLastName("");
+              setDoctorAvailability([]); // Reset availability when department changes
             }}
           >
-            {departmentsArray.map((depart, index) => {
-              return (
-                <option value={depart} key={index}>
-                  {depart}
-                </option>
-              );
-            })}
+            {departmentsArray.map((depart, index) => (
+              <option value={depart} key={index}>
+                {depart}
+              </option>
+            ))}
           </select>
+
           <select
             value={`${doctorFirstName} ${doctorLastName}`}
-            onChange={(e) => {
-              const [firstName, lastName] = e.target.value.split(" ");
-              setDoctorFirstName(firstName);
-              setDoctorLastName(lastName);
-            }}
+            onChange={handleDoctorChange}
             disabled={!department}
           >
             <option value="">Select Doctor</option>
@@ -209,28 +220,39 @@ const AppointmentForm = () => {
               ))}
           </select>
         </div>
+
+        <div>
+          <select
+            value={timeSlot}
+            onChange={(e) => setTimeSlot(e.target.value)}
+            disabled={!appointmentDate || !doctorFirstName || !doctorLastName}
+          >
+            <option value="">Select Time Slot</option>
+            {getAvailableTimeSlots().map((slot, index) => (
+              <option value={slot} key={index}>
+                {slot}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <textarea
           rows="10"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Address"
         />
-         <div
-            style={{
-              gap: "10px",
-              justifyContent: "flex-end",
-              flexDirection: "row",
-            }}
-          >
-            <p style={{ marginBottom: 0 }}>Have you visited before?</p>
-            <input
-              type="checkbox"
-              checked={hasVisited}
-              onChange={(e) => setHasVisited(e.target.checked)}
-              style={{ flex: "none", width: "25px" }}
-            />
-          </div>
-        <button>GET APPOINTMENT</button>
+
+        <div>
+          <p>Have you visited before?</p>
+          <input
+            type="checkbox"
+            checked={hasVisited}
+            onChange={(e) => setHasVisited(e.target.checked)}
+          />
+        </div>
+
+        <button type="submit">GET APPOINTMENT</button>
       </form>
     </div>
   );

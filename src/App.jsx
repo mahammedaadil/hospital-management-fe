@@ -6,7 +6,7 @@ import "./App.css";
 import axiosInstance from './axios';
 import Footer from './components/footer';
 import Navbar from './components/navbar';
-import PatientAppointments from './components/PatientAppointments';
+import Profile from './pages/Profile';
 import { Context } from './main';
 import AboutUs from "./pages/AboutUs";
 import Appointment from "./pages/Appointment";
@@ -14,6 +14,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
+import Doctors from './pages/Doctors';  // Import Doctor component
 
 const PrivateRoute = ({ isAuthenticated, children }) => {
   return isAuthenticated ? children : <Navigate to="/login" />; // Redirect to login if not authenticated
@@ -53,8 +54,9 @@ const App = () => {
           <Route path='/about' element={<AboutUs />} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/profile' element={<PatientAppointments />} />
+          <Route path='/profile' element={<Profile />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/doctors" element={<Doctors />} /> {/* Add this line */}
         </Routes>
         <Footer />
         <ToastContainer position="top-center" />

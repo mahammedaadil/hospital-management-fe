@@ -1,7 +1,7 @@
 import React from "react";
 import PatientAppointments from "../components/PatientAppointments";
 
-const PatientAppointments = () => {
+const Profile = () => {
   return (
     <>
       
@@ -11,4 +11,4 @@ const PatientAppointments = () => {
   );
 };
 
-export default AboutUs;
+export default Profile;
