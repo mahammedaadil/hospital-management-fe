@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios";
 
@@ -32,7 +32,6 @@ const AppointmentForm = () => {
     "ENT",
   ];
 
-  // Updated time slots to half-hour intervals
   const timeSlots = [
     "09:00-09:30", "09:30-10:00",
     "10:00-10:30", "10:30-11:00",
@@ -47,8 +46,18 @@ const AppointmentForm = () => {
   ];
 
   const navigateTo = useNavigate();
+  const location = useLocation();
+  const { doctor } = location.state || {}; // Get doctor details from state
 
-  // Fetch doctors
+  useEffect(() => {
+    if (doctor) {
+      setDoctorFirstName(doctor.firstName);
+      setDoctorLastName(doctor.lastName);
+      setDepartment(doctor.doctorDepartment);
+      setDoctorAvailability(doctor.doctorAvailability || []);
+    }
+  }, [doctor]);
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -69,15 +78,14 @@ const AppointmentForm = () => {
     setDoctorFirstName(firstName);
     setDoctorLastName(lastName);
 
-    // Find selected doctor to get availability
     const selectedDoctor = doctors.find(
       (doctor) =>
         doctor.firstName === firstName && doctor.lastName === lastName
     );
 
     if (selectedDoctor) {
-      setDoctorAvailability(selectedDoctor.doctorAvailability || []); // Set doctor's availability
-      setTimeSlot(""); // Reset time slot
+      setDoctorAvailability(selectedDoctor.doctorAvailability || []);
+      setTimeSlot("");
     }
   };
 
@@ -107,7 +115,7 @@ const AppointmentForm = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      toast.success(data.message);
+      toast.success(`Appointment booked! Your token number is ${data.appointment.tokenNumber}`);
       navigateTo("/"); // Redirect after appointment creation
     } catch (error) {
       toast.error(error.response.data.message);
@@ -115,19 +123,17 @@ const AppointmentForm = () => {
   };
 
   const getAvailableTimeSlots = () => {
-    if (!appointmentDate || doctorAvailability.length === 0) return []; // Return empty array if no availability
+    if (!appointmentDate || doctorAvailability.length === 0) return [];
 
     const selectedDay = new Date(appointmentDate).toLocaleString("en-us", {
       weekday: "long",
     });
 
-    // Filter the doctor's availability for the selected day
     const availability = doctorAvailability.find(
       (avail) => avail.day === selectedDay
     );
 
     if (availability) {
-      // Ensure the timings available match the half-hour slots structure
       return timeSlots.filter((slot) => availability.timings.includes(slot));
     }
     return [];
@@ -192,7 +198,7 @@ const AppointmentForm = () => {
               setDepartment(e.target.value);
               setDoctorFirstName("");
               setDoctorLastName("");
-              setDoctorAvailability([]); // Reset availability when department changes
+              setDoctorAvailability([]);
             }}
           >
             {departmentsArray.map((depart, index) => (

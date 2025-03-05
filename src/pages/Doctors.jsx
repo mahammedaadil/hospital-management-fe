@@ -2,13 +2,14 @@ import axiosInstance from "../axios";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../main";
-import { Navigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom"; 
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
-  const { isAuthenticated, userRole } = useContext(Context); // Assuming `userRole` is stored to check if the user is a patient or not
+  const { isAuthenticated, userRole } = useContext(Context);
   const [showAvailabilityInfo, setShowAvailabilityInfo] = useState(null);
   const [filterDepartment, setFilterDepartment] = useState("All");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -27,13 +28,12 @@ const Doctors = () => {
     ? doctors 
     : doctors.filter(doc => doc.doctorDepartment === filterDepartment);
 
-  if (!isAuthenticated) {
-    return <Navigate to={"/login"} />;
-  }
-
-  // Toggle function for showing or hiding availability info
   const toggleAvailability = (doctorId) => {
-    setShowAvailabilityInfo((prev) => (prev === doctorId ? null : doctorId)); // If the doctor ID is already shown, hide it, else show it
+    setShowAvailabilityInfo((prev) => (prev === doctorId ? null : doctorId));
+  };
+
+  const handleBookNow = (doctor) => {
+    navigate(`/appointment`, { state: { doctor } });
   };
 
   return (
@@ -74,28 +74,13 @@ const Doctors = () => {
                 )}
               </div>
 
-              {/* Conditional rendering of actions */}
-              {userRole !== "patient" ? (
-                // No actions for admin here, but you could add them if necessary
-                <div className="actions">
-                  <button 
-                    className="btn btn-check-availability" 
-                    onClick={() => toggleAvailability(element._id)} // Toggle availability info
-                  >
-                    {showAvailabilityInfo === element._id ? "Hide Availability" : "Check Availability"}
-                  </button>
-                </div>
-              ) : (
-                // Patient view - Show more information (if needed)
-                <button 
-                  className="btn btn-more-info" 
-                  onClick={() => toggleAvailability(element._id)} // Toggle availability info
-                >
-                  {showAvailabilityInfo === element._id ? "Hide Availability" : "Check Availability"}
-                </button>
-              )}
+              <button 
+                className="btn btn-check-availability" 
+                onClick={() => toggleAvailability(element._id)}
+              >
+                {showAvailabilityInfo === element._id ? "Hide Availability" : "Check Availability"}
+              </button>
 
-              {/* Show Availability Info */}
               {showAvailabilityInfo === element._id && element.doctorAvailability && (
                 <div className="availability-info">
                   <p><strong>Availability:</strong></p>
@@ -110,6 +95,12 @@ const Doctors = () => {
                   ) : (
                     <p>No Availability Info</p>
                   )}
+                  <button 
+                    className="btn btn-book-now" 
+                    onClick={() => handleBookNow(element)}
+                  >
+                    Book Now
+                  </button>
                 </div>
               )}
             </div>
