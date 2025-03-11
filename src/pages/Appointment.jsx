@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Hero from "../components/Hero";
 import AppointmentForm from "../components/AppointmentForm";
+
 
 const Appointment = () => {
   return (
