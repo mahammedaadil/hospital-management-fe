@@ -593,30 +593,120 @@ footer .logo-img{
 /* own css*/ 
 
 /* Patient Appointments Page */
+
+/* ========== Global Styles ========== */
+
+
 .page {
+  
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-top: 120px; /* Adjusted for fixed navbar */
+  padding-top: 135px; /* Adjusted for fixed navbar */
   padding-bottom: 80px; /* Adjusted for fixed footer */
 }
 
-.patient-appointments {
-  flex: 1; /* Take up remaining space between header and footer */
-  padding: 140px 100px;
-  background: #e5e5e5;
+/* ========== Profile Section ========== */
+.profile-container {
+  
+  max-width: 500px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-@media (max-width: 700px) {
-  .patient-appointments {
-    padding: 20px;
-  }
+.profile-container h5 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #222;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.user-info p {
+  font-size: 16px;
+  color: #444;
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.user-info input,
+.user-info select {
+  font-size: 16px;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.user-info input:focus,
+.user-info select:focus {
+  border-color: #007bff;
+  background: #fff;
+}
+
+/* ========== Button Styling ========== */
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-width: 100px;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.edit-btn {
+  background: #007bff;
+  color: #fff;
+}
+
+.save-btn {
+  background: #28a745;
+  color: #fff;
+}
+
+.cancel-btn {
+  background: #dc3545;
+  color: #fff;
+}
+
+/* ========== Appointments Section ========== */
+.patient-appointments {
+  flex: 1;
+  padding: 40px 100px;
+  background: #e5e5e5;
 }
 
 .appointments-list {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
 }
 
 .appointment-item {
@@ -625,7 +715,7 @@ footer .logo-img{
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Montserrat", sans-serif;
+  animation: slideIn 0.5s ease-in-out;
 }
 
 .appointment-info {
@@ -638,7 +728,7 @@ footer .logo-img{
 .appointment-info p {
   margin: 0;
   flex-basis: 45%;
-  font-size: 20px;
+  font-size: 16px;
   color: #111;
 }
 
@@ -654,28 +744,93 @@ footer .logo-img{
   color: red;
 }
 
-.green {
-  color: green;
+/* ========== Animations ========== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.red {
-  color: red;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-h5 {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-  color: #111;
+@keyframes rotateBg {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* For responsiveness */
+/* ========== Responsive Design ========== */
 @media (max-width: 700px) {
+  .profile-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .patient-appointments {
+    padding: 20px;
+  }
+
   .appointment-info p {
     flex-basis: 100%;
   }
+
+  .btn {
+    width: 100%;
+  }
 }
+
+/* ========== Profile Section Enhancements ========== */
+.user-profile {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 900px;
+  margin: 50px auto;
+  animation: slideIn 0.6s ease-in-out;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.user-profile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.user-profile::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+  transform: rotate(25deg);
+  animation: rotateBg 6s infinite linear;
+  pointer-events: none;
+}
+
+
+
 
 /*forgot password css */
 /* ForgotPassword.css */
