@@ -14,9 +14,11 @@ const AppointmentForm = () => {
   const [department, setDepartment] = useState("Pediatrics");
   const [doctorFirstName, setDoctorFirstName] = useState("");
   const [doctorLastName, setDoctorLastName] = useState("");
+  const [doctorFees, setDoctorFees] = useState(""); // State for doctor fees
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
   const [timeSlot, setTimeSlot] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState(""); // State for payment method
   const [doctors, setDoctors] = useState([]);
   const [doctorAvailability, setDoctorAvailability] = useState([]);
 
@@ -33,31 +35,44 @@ const AppointmentForm = () => {
   ];
 
   const timeSlots = [
-    "09:00-09:30", "09:30-10:00",
-    "10:00-10:30", "10:30-11:00",
-    "11:00-11:30", "11:30-12:00",
-    "12:00-12:30", "12:30-01:00",
-    "14:00-14:30", "14:30-15:00",
-    "15:00-15:30", "15:30-16:00",
-    "16:00-16:30", "16:30-17:00",
-    "17:00-17:30", "17:30-18:00",
-    "18:00-18:30", "18:30-19:00",
-    "19:00-19:30", "19:30-20:00",
+    "09:00-09:30",
+    "09:30-10:00",
+    "10:00-10:30",
+    "10:30-11:00",
+    "11:00-11:30",
+    "11:30-12:00",
+    "12:00-12:30",
+    "12:30-01:00",
+    "14:00-14:30",
+    "14:30-15:00",
+    "15:00-15:30",
+    "15:30-16:00",
+    "16:00-16:30",
+    "16:30-17:00",
+    "17:00-17:30",
+    "17:30-18:00",
+    "18:00-18:30",
+    "18:30-19:00",
+    "19:00-19:30",
+    "19:30-20:00",
   ];
 
   const navigateTo = useNavigate();
   const location = useLocation();
   const { doctor } = location.state || {}; // Get doctor details from state
 
+  // Set initial doctor data if passed via location.state
   useEffect(() => {
     if (doctor) {
       setDoctorFirstName(doctor.firstName);
       setDoctorLastName(doctor.lastName);
       setDepartment(doctor.doctorDepartment);
+      setDoctorFees(doctor.doctorFees || ""); // Set doctor's fee
       setDoctorAvailability(doctor.doctorAvailability || []);
     }
   }, [doctor]);
 
+  // Fetch all doctors
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -73,17 +88,24 @@ const AppointmentForm = () => {
     fetchDoctors();
   }, []);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
   const handleDoctorChange = (e) => {
     const [firstName, lastName] = e.target.value.split(" ");
     setDoctorFirstName(firstName);
     setDoctorLastName(lastName);
 
     const selectedDoctor = doctors.find(
-      (doctor) =>
-        doctor.firstName === firstName && doctor.lastName === lastName
+      (doctor) => doctor.firstName === firstName && doctor.lastName === lastName
     );
 
     if (selectedDoctor) {
+      setDoctorFees(selectedDoctor.doctorFees || ""); // Update doctor's fee
       setDoctorAvailability(selectedDoctor.doctorAvailability || []);
       setTimeSlot("");
     }
@@ -91,34 +113,115 @@ const AppointmentForm = () => {
 
   const handleAppointment = async (e) => {
     e.preventDefault();
-    try {
-      const hasVisitedBool = Boolean(hasVisited);
-      const { data } = await axiosInstance.post(
-        "appointment/post",
-        {
-          firstName,
-          lastName,
-          email,
-          phone,
-          dob,
-          gender,
-          appointment_date: appointmentDate,
-          timeSlot,
-          department,
-          doctor_firstName: doctorFirstName,
-          doctor_lastName: doctorLastName,
-          hasVisited: hasVisitedBool,
-          address,
-        },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      toast.success(`Appointment booked! Your token number is ${data.appointment.tokenNumber}`);
-      navigateTo("/"); // Redirect after appointment creation
-    } catch (error) {
-      toast.error(error.response.data.message);
+
+    if (paymentMethod === "Online") {
+      try {
+        // ✅ Step 1: Request Order ID from Backend
+        const orderResponse = await axiosInstance.post("payment/create-order", {
+          amount: doctorFees * 100, // Amount in paisa
+          currency: "INR",
+        });
+
+        const { id: order_id } = orderResponse.data;
+
+        // ✅ Step 2: Configure Razorpay Payment
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: doctorFees * 100, // Convert to paisa
+          currency: "INR",
+          name: "AadiCare Hospital",
+          description: "Appointment Booking",
+          order_id, // ✅ Use order_id from backend
+          handler: async function (response) {
+            try {
+              const hasVisitedBool = Boolean(hasVisited);
+              const { data } = await axiosInstance.post(
+                "appointment/post",
+                {
+                  firstName,
+                  lastName,
+                  email,
+                  phone,
+                  dob,
+                  gender,
+                  appointment_date: appointmentDate,
+                  timeSlot,
+                  department,
+                  doctor_firstName: doctorFirstName,
+                  doctor_lastName: doctorLastName,
+                  doctor_fees: doctorFees,
+                  paymentMethod,
+                  hasVisited: hasVisitedBool,
+                  address,
+                  paymentId: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
+                },
+                {
+                  withCredentials: true,
+                  headers: { "Content-Type": "application/json" },
+                }
+              );
+
+              toast.success(
+                `Appointment booked! Your token number is ${data.appointment.tokenNumber}`
+              );
+              navigateTo("/");
+            } catch (error) {
+              toast.error(error.response.data.message);
+            }
+          },
+          prefill: {
+            name: `${firstName} ${lastName}`,
+            email: email,
+            contact: phone,
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+      } catch (error) {
+        toast.error("Failed to initiate payment.");
+      }
+    } else {
+      // ✅ Proceed with offline payment
+      try {
+        const hasVisitedBool = Boolean(hasVisited);
+        const { data } = await axiosInstance.post(
+          "appointment/post",
+          {
+            firstName,
+            lastName,
+            email,
+            phone,
+            dob,
+            gender,
+            appointment_date: appointmentDate,
+            timeSlot,
+            department,
+            doctor_firstName: doctorFirstName,
+            doctor_lastName: doctorLastName,
+            doctor_fees: doctorFees,
+            paymentMethod,
+            hasVisited: hasVisitedBool,
+            address,
+          },
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        toast.success(
+          `Appointment booked! Your token number is ${data.appointment.tokenNumber}`
+        );
+        navigateTo("/");
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
     }
   };
 
@@ -242,12 +345,44 @@ const AppointmentForm = () => {
           </select>
         </div>
 
+        {/* Doctor Fees Input Field */}
+        <div>
+          <input
+            type="text"
+            placeholder="Doctor's Fee"
+            value={doctorFees}
+            disabled
+          />
+        </div>
+
         <textarea
           rows="10"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Address"
         />
+
+        <div>
+          <p>Payment Method:</p>
+          <label>
+            <input
+              type="radio"
+              value="Online"
+              checked={paymentMethod === "Online"}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            />{" "}
+            Pay Online
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="Offline"
+              checked={paymentMethod === "Offline"}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            />{" "}
+            Pay Offline
+          </label>
+        </div>
 
         <div>
           <p>Have you visited before?</p>

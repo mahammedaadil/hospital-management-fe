@@ -441,6 +441,7 @@ footer .content div:last-child div svg {
 
 /**********************************************************************************************************************/
 nav {
+  
   display: flex;
   width: 100%;
   margin: 0 auto;
@@ -454,6 +455,7 @@ nav {
   top: 0;
   left: 0;
   z-index: 1000;
+
 }
 
 nav .logo {
@@ -599,7 +601,7 @@ footer .logo-img{
 
 .page {
   
-
+  margin-top: 70px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
