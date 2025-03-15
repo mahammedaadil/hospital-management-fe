@@ -592,26 +592,22 @@ footer .logo-img{
   width: 100%;
 }
 
-/* own css*/ 
-
 /* Patient Appointments Page */
 
 /* ========== Global Styles ========== */
-
-
 .page {
-  
   margin-top: 70px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   padding-top: 135px; /* Adjusted for fixed navbar */
   padding-bottom: 80px; /* Adjusted for fixed footer */
+  background: #e5e5e5;
+  font-family: "Montserrat", sans-serif;
 }
 
 /* ========== Profile Section ========== */
 .profile-container {
-  
   max-width: 500px;
   margin: 50px auto;
   background: #ffffff;
@@ -619,14 +615,13 @@ footer .logo-img{
   padding: 30px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
-  animation: fadeIn 0.6s ease-in-out;
 }
 
 .profile-container h5 {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #222;
+  color: #271776ca; /* Deep purple color */
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -639,7 +634,7 @@ footer .logo-img{
 }
 
 .user-info p {
-  font-size: 16px;
+  font-size: 20px;
   color: #444;
   background: #f9f9f9;
   padding: 12px;
@@ -649,7 +644,7 @@ footer .logo-img{
 
 .user-info input,
 .user-info select {
-  font-size: 16px;
+  font-size: 20px;
   padding: 10px;
   width: 100%;
   border: 1px solid #ccc;
@@ -660,17 +655,18 @@ footer .logo-img{
 
 .user-info input:focus,
 .user-info select:focus {
-  border-color: #007bff;
+  border-color: #271776ca; /* Deep purple color */
   background: #fff;
 }
 
 /* ========== Button Styling ========== */
 .btn {
-  padding: 10px 15px;
+  padding: 7px 20px;
+  border-radius: 12px;
   border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 600;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
@@ -678,13 +674,8 @@ footer .logo-img{
   margin-top: 10px;
 }
 
-.btn:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
-
 .edit-btn {
-  background: #007bff;
+  background: #271776ca; /* Deep purple color */
   color: #fff;
 }
 
@@ -696,6 +687,11 @@ footer .logo-img{
 .cancel-btn {
   background: #dc3545;
   color: #fff;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
 }
 
 /* ========== Appointments Section ========== */
@@ -717,7 +713,12 @@ footer .logo-img{
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  animation: slideIn 0.5s ease-in-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.appointment-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .appointment-info {
@@ -730,7 +731,7 @@ footer .logo-img{
 .appointment-info p {
   margin: 0;
   flex-basis: 45%;
-  font-size: 16px;
+  font-size: 20px;
   color: #111;
 }
 
@@ -769,15 +770,6 @@ footer .logo-img{
   }
 }
 
-@keyframes rotateBg {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* ========== Responsive Design ========== */
 @media (max-width: 700px) {
   .profile-container {
@@ -807,7 +799,6 @@ footer .logo-img{
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   max-width: 900px;
   margin: 50px auto;
-  animation: slideIn 0.6s ease-in-out;
   border: 1px solid rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
@@ -829,6 +820,15 @@ footer .logo-img{
   transform: rotate(25deg);
   animation: rotateBg 6s infinite linear;
   pointer-events: none;
+}
+
+@keyframes rotateBg {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 

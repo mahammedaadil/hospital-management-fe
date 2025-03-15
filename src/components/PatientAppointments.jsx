@@ -214,6 +214,7 @@ const PatientAppointments = () => {
                     <p><strong>Department:</strong> {appointment.department}</p>
                     <p><strong>Doctor:</strong> {`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</p>
                     <p><strong>Status:</strong> {appointment.status}</p>
+                    <p><strong>Token Number:</strong> {appointment.tokenNumber}</p>
                   </div>
                 ))
               ) : (
