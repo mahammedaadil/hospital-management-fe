@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import Doctors from './pages/Doctors';  // Import Doctor component
+import ConfirmEmail from './pages/ConfirmEmail';
 
 const PrivateRoute = ({ isAuthenticated, children }) => {
   return isAuthenticated ? children : <Navigate to="/login" />; // Redirect to login if not authenticated
@@ -57,6 +58,7 @@ const App = () => {
           <Route path='/profile' element={<Profile />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/doctors" element={<Doctors />} /> {/* Add this line */}
+          <Route path="/confirm-email/:token" element={<ConfirmEmail />} />
         </Routes>
         <Footer />
         <ToastContainer position="top-center" />
