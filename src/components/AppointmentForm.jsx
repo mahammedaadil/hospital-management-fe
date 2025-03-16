@@ -362,6 +362,26 @@ const AppointmentForm = () => {
           placeholder="Address"
         />
 
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start", 
+            alignItems: "center", 
+          }}
+        >
+          <label style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <p style={{ marginBottom: 0 }}>Have you visited before?</p>
+            <input
+              type="checkbox"
+              checked={hasVisited}
+              onChange={(e) => setHasVisited(e.target.checked)}
+              style={{ transform: "scale(1.17)", cursor: "pointer" }}
+            />
+          </label>
+        </div>
+
+
+
         <div>
           <p>Payment Method:</p>
           <label>
@@ -384,14 +404,7 @@ const AppointmentForm = () => {
           </label>
         </div>
 
-        <div>
-          <p>Have you visited before?</p>
-          <input
-            type="checkbox"
-            checked={hasVisited}
-            onChange={(e) => setHasVisited(e.target.checked)}
-          />
-        </div>
+    
 
         <button type="submit">GET APPOINTMENT</button>
       </form>

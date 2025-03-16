@@ -5,6 +5,9 @@ import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios";
 import { Context } from "../main";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 const PatientAppointments = () => {
   const { isAuthenticated, user, setUser, setIsAuthenticated } = useContext(Context);
@@ -20,6 +23,24 @@ const PatientAppointments = () => {
     email: "",
     phone: "",
   });
+
+  const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+  
+  const addReportHeader = (doc, title) => {
+    const img = new Image();
+    img.src = "public/logo.png";
+    doc.addImage(img, "PNG", 10, 10, 30, 30);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("AadiCare - Your Health, Our Priority", 50, 20);
+    doc.setFontSize(12);
+    doc.text("Contact: +91-9106624120 | Email: adilchoice30@gmail.com", 50, 30);
+    doc.text(capitalizeWords(title), 20, 50); // Capitalize title
+    doc.text(`Report Generated On: ${new Date().toLocaleString()}`, 20, 60);
+    
+  };
 
   // Fetch user profile
   useEffect(() => {
@@ -52,13 +73,28 @@ const PatientAppointments = () => {
       const { data } = await axiosInstance.get(`appointment/getpatient/${user._id}`, {
         withCredentials: true,
       });
-      setAppointments(data.appointments);
-      setShowPopup(true); // Show popup
+  
+      const appointmentsWithPayments = await Promise.all(
+        data.appointments.map(async (appointment) => {
+          try {
+            const paymentResponse = await axiosInstance.get(`payment/getbyappointment/${appointment._id}`, {
+              withCredentials: true,
+            });
+            return { ...appointment, payment: paymentResponse.data.payment };
+          } catch (error) {
+            return { ...appointment, payment: null };
+          }
+        })
+      );
+  
+      setAppointments(appointmentsWithPayments);
+      setShowPopup(true);
     } catch (error) {
       setAppointments([]);
-      toast.error("Error fetching appointments");
+      toast.error("Error fetching appointments and payments");
     }
   };
+  
 
   const handleEditClick = () => setIsEditing(true);
   const handleCancelEdit = () => {
@@ -95,6 +131,46 @@ const PatientAppointments = () => {
       toast.error("Failed to update profile");
     }
   };
+
+  const generatePDF = (appointment) => {
+    const doc = new jsPDF();
+    addReportHeader(doc, "Appointment Details");
+  
+    const tableColumn = ["Field", "Details"];
+    const tableRows = [
+      ["Patient Name", `${appointment.firstName} ${appointment.lastName}`],
+      ["Date", new Date(appointment.appointment_date).toLocaleDateString()],
+      ["Time", appointment.timeSlot],
+      ["Department", appointment.department],
+      ["Doctor", `${appointment.doctor.firstName} ${appointment.doctor.lastName}`],
+      ["Status", appointment.status],
+    ];
+  
+    // Token Number in a bigger and bold style
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 255);
+    doc.text(`Token Number: ${appointment.tokenNumber}`, 20, 80);
+  
+    // Reset styles for other data
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+  
+    if (appointment.payment) {
+      tableRows.push(
+        ["Payment Amount", `${appointment.payment.amount} Rupees`],
+        ["Payment Mode", appointment.payment.paymentMode],
+        ["Payment Status", appointment.payment.status],
+        appointment.payment.paymentMode === "Online" ? ["Razorpay Order ID", appointment.payment.razorpayOrderId] : null
+      );
+    }
+  
+    autoTable(doc, { startY: 90, head: [tableColumn], body: tableRows.filter(Boolean) });
+    doc.save(`Appointment_${appointment._id}.pdf`);
+    toast.success("Your Payment Receipt  Downloaded Successfully!");
+  };
+  
 
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
@@ -201,28 +277,42 @@ const PatientAppointments = () => {
 
       {/* Popup Modal */}
       {showPopup && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <span className="close-btn" onClick={() => setShowPopup(false)}>✖</span>
-            <h5>Your Appointments</h5>
-            <div className="appointments-list">
-              {appointments.length > 0 ? (
-                appointments.map((appointment) => (
-                  <div className="appointment-item" key={appointment._id}>
-                    <p><strong>Date:</strong> {new Date(appointment.appointment_date).toLocaleDateString()}</p>
-                    <p><strong>Time:</strong> {appointment.timeSlot}</p>
-                    <p><strong>Department:</strong> {appointment.department}</p>
-                    <p><strong>Doctor:</strong> {`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</p>
-                    <p><strong>Status:</strong> {appointment.status}</p>
-                    <p><strong>Token Number:</strong> {appointment.tokenNumber}</p>
-                  </div>
-                ))
+        <div className="appointments-list">
+        {appointments.length > 0 ? (
+          appointments.map((appointment) => (
+            <div className="appointment-item" key={appointment._id}>
+              <p><strong>Patient Name:</strong> {appointment.firstName} {appointment.lastName}</p>
+              <p><strong>Date:</strong> {new Date(appointment.appointment_date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> {appointment.timeSlot}</p>
+              <p><strong>Department:</strong> {appointment.department}</p>
+              <p><strong>Doctor:</strong> {`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</p>
+              <p><strong>Status:</strong> {appointment.status}</p>
+              <p><strong>Token Number:</strong> {appointment.tokenNumber}</p>
+      
+              {appointment.payment ? (
+                <>
+                  <p><strong>Payment Amount:</strong> ₹{appointment.payment.amount}</p>
+                  <p><strong>Payment Mode:</strong> {appointment.payment.paymentMode}</p>
+                  <p><strong>Payment Status:</strong> {appointment.payment.status}</p>
+                  {appointment.payment.paymentMode === "Online" && (
+                    <>
+                      <p><strong>Razorpay Order ID:</strong> {appointment.payment.razorpayOrderId}</p>
+                      
+                    </>
+                  )}
+                </>
               ) : (
-                <p>No Appointments Found!</p>
+                <p><strong>Payment:</strong> No Payment Details Found</p>
               )}
+               <button className="pdf-btn" onClick={() => generatePDF(appointment)}>
+                  Download PDF
+                </button>
             </div>
-          </div>
-        </div>
+          ))
+        ) : (
+          <p>No Appointments Found!</p>
+        )}
+      </div>
       )}
     </section>
   );

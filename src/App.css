@@ -316,82 +316,172 @@ h6 {
     top: 10%;
   }
 }
-footer {
-  padding-bottom: 30px !important;
-}
-footer hr {
-  margin-bottom: 30px;
-}
-footer .content {
-  display: flex;
-  gap: 20px;
-}
-footer .content div {
-  flex: 1;
-}
-footer .content div:nth-child(3) {
-  flex: 2;
-}
-footer .content div h4 {
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-footer .content div ul {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-footer .content div ul a {
-  color: gray;
-  text-decoration: none;
-}
-footer .content div ul a:hover {
-  color: #8570ed;
-  transition: 0.3s;
-}
-footer .content div ul li span {
-  color: gray;
-}
-footer .content div ul li span:first-child {
-  width: 150px;
-  display: inline-block;
+
+/* Footer Container */
+.footer {
+  padding: 30px 20px; /* Add padding to top/bottom and left/right */
+   /* Light background color */
+  color: #333; /* Default text color */
 }
 
-footer .content div:last-child div {
+/* Divider Line */
+.footer-divider {
+  border: 0;
+  border-top: 1px solid #ddd; /* Light gray line */
+  margin-bottom: 30px;
+}
+
+/* Footer Content Layout */
+.footer-content {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  gap: 30px; /* Space between sections */
+  justify-content: space-between; /* Distribute space evenly */
+  max-width: 1200px; /* Limit maximum width */
+  margin: 0 auto; /* Center the content */
+}
+
+/* Footer Sections */
+.footer-section {
+  flex: 1; /* Allow sections to grow */
+  min-width: 200px; /* Minimum width for each section */
+}
+
+/* Footer Logo */
+.footer-logo-img {
+  max-width: 280px; /* Limit logo size */
+  height: auto; /* Maintain aspect ratio */
+}
+
+/* Footer Headings */
+.footer-heading {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #271776; /* Deep purple color */
+}
+
+/* Footer Links */
+/* Quick Links Icons */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
   margin-bottom: 10px;
 }
-footer .content div:last-child div svg {
-  font-size: 24px;
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between icon and text */
+  color: #666; /* Default text color */
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
-@media (max-width: 1135px) {
-  footer .content {
-    flex-wrap: wrap;
-    justify-content: space-between;
+
+.footer-link:hover {
+  color: #8570ed; /* Change color on hover */
+}
+
+.footer-link-icon {
+  font-size: 18px; /* Icon size */
+  color: #271776; /* Default icon color */
+}
+/* Footer Hours */
+.footer-hours {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-hour-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.footer-day {
+  font-weight: 500;
+  color: #444;
+}
+
+.footer-time {
+  color: #666;
+}
+
+/* Footer Contact Info */
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between contact items */
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between icon and text */
+  color: #666;
+}
+
+.footer-icon {
+  font-size: 20px;
+  color: #271776; /* Deep purple color for icons */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column; /* Stack sections vertically */
+    align-items: center; /* Center-align content */
+    text-align: center; /* Center-align text */
   }
-  footer .content div,
-  footer .content div:nth-child(3) {
-    flex: none;
-    width: 340px;
-    margin-bottom: 30px;
+
+  .footer-section {
+    width: 100%; /* Full width for smaller screens */
+    max-width: 400px; /* Limit width for better readability */
+  }
+
+  .footer-hour-item {
+    justify-content: center; /* Center-align hours */
   }
 }
-@media (max-width: 900px) {
-  footer {
-    padding-bottom: 0 !important;
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 20px 10px; /* Reduce padding for very small screens */
   }
-  footer .content div,
-  footer .content div:nth-child(3) {
-    width: 100%;
+
+  .footer-heading {
+    font-size: 16px; /* Smaller heading size */
+  }
+
+  .footer-links a,
+  .footer-day,
+  .footer-time,
+  .footer-contact-item span {
+    font-size: 14px; /* Smaller text size */
   }
 }
-@media (max-width: 390px) {
-  footer .content div:nth-child(3) ul li {
-    display: flex;
-    flex-direction: column;
-  }
+
+/* Social Media Icons */
+.footer-social-icons {
+  display: flex;
+  gap: 15px; /* Space between icons */
+  margin-top: 15px; /* Space between logo and icons */
+  justify-content: center; /* Center-align icons */
+}
+
+.social-icon {
+  font-size: 24px; /* Icon size */
+  color: #271776; /* Default icon color */
+  transition: color 0.3s ease; /* Smooth color transition */
+}
+
+.social-icon:hover {
+  color: #8570ed; /* Change color on hover */
 }
 
 .departments {
@@ -788,6 +878,18 @@ footer .logo-img{
   .btn {
     width: 100%;
   }
+}
+
+.pdf-btn {
+  background: #271776ca;
+  color: white;
+  border: none;
+  padding: 7px 50px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 /* ========== Profile Section Enhancements ========== */
