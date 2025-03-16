@@ -1,10 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosInstance from '../axios';
 
 const ConfirmEmail = () => {
-  const { token } = useParams(); // Get token from URL
+  const { token } = useParams(); 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +17,8 @@ const ConfirmEmail = () => {
 
     const confirmEmail = async () => {
       try {
-        const res = await axios.get(`http://localhost:4000/api/v1/user/confirm-email/${token}`);
+        // Use the Axios instance for the API call
+        const res = await axiosInstance.get(`/user/confirm-email/${token}`);
         toast.success(res.data.message);
         navigate("/login"); // Redirect to login page after confirmation
       } catch (error) {
@@ -32,9 +33,19 @@ const ConfirmEmail = () => {
   }, [token, navigate]);
 
   return (
-    <div className="container">
+    <div className="confirm-email-container">
       <h2>{loading ? "Verifying Email..." : "Email Verification"}</h2>
-      {loading && <p>Please wait while we confirm your email...</p>}
+      {loading && (
+        <>
+          <div className="loading-spinner"></div>
+          <p>Please wait while we confirm your email...</p>
+        </>
+      )}
+      {!loading && (
+        <button className="btn" onClick={() => navigate("/login")}>
+          Go to Login
+        </button>
+      )}
     </div>
   );
 };

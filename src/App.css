@@ -1206,3 +1206,111 @@ footer .logo-img{
 }
 
 
+/* confirm email css*/
+.confirm-email-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #e5e5e5;
+  padding: 20px;
+  text-align: center;
+}
+
+.confirm-email-container h2 {
+  font-size: 32px;
+  font-weight: 900;
+  color: #271776ca; /* Deep purple color */
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.confirm-email-container p {
+  font-size: 20px;
+  color: #444;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+.confirm-email-container .loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #271776ca; /* Deep purple color */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.confirm-email-container .success-message {
+  color: #28a745; /* Green color for success */
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.confirm-email-container .error-message {
+  color: #dc3545; /* Red color for error */
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.confirm-email-container .btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #271776ca; /* Deep purple color */
+  color: #fff;
+}
+
+.confirm-email-container .btn:hover {
+  background: #1f1450; /* Darker shade for hover */
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .confirm-email-container h2 {
+    font-size: 28px;
+  }
+
+  .confirm-email-container p {
+    font-size: 18px;
+  }
+
+  .confirm-email-container .btn {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .confirm-email-container h2 {
+    font-size: 24px;
+  }
+
+  .confirm-email-container p {
+    font-size: 16px;
+  }
+
+  .confirm-email-container .btn {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+}

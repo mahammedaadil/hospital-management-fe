@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../axios"; // Import the axios instance
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,20 +13,26 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const navigateTo = useNavigate();
+  const navigate = useNavigate();
 
   const handleRegistration = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:4000/api/v1/user/patient/register",
-        { firstName, lastName, email, phone, dob, gender, password, confirmPassword, role: "Patient" },
-        { withCredentials: true, headers: { "Content-Type": "application/json" } }
-      );
+      const res = await axiosInstance.post("/user/patient/register", {
+        firstName,
+        lastName,
+        email,
+        phone,
+        dob,
+        gender,
+        password,
+        confirmPassword,
+        role: "Patient",
+      });
 
       toast.success(res.data.message);
       toast.info("Please check your email to verify your account.");
-      navigateTo("/verify-email");
+      navigate("/");
 
       // Reset fields
       setFirstName("");
