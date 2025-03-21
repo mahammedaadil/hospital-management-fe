@@ -305,7 +305,7 @@ const PatientAppointments = () => {
                 <p><strong>Payment:</strong> No Payment Details Found</p>
               )}
                <button className="pdf-btn" onClick={() => generatePDF(appointment)}>
-                  Download PDF
+                  Download Receipt
                 </button>
             </div>
           ))
