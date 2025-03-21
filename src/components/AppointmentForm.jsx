@@ -14,11 +14,11 @@ const AppointmentForm = () => {
   const [department, setDepartment] = useState("Pediatrics");
   const [doctorFirstName, setDoctorFirstName] = useState("");
   const [doctorLastName, setDoctorLastName] = useState("");
-  const [doctorFees, setDoctorFees] = useState(""); // State for doctor fees
+  const [doctorFees, setDoctorFees] = useState("");
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
   const [timeSlot, setTimeSlot] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState(""); // State for payment method
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [doctors, setDoctors] = useState([]);
   const [doctorAvailability, setDoctorAvailability] = useState([]);
 
@@ -59,20 +59,18 @@ const AppointmentForm = () => {
 
   const navigateTo = useNavigate();
   const location = useLocation();
-  const { doctor } = location.state || {}; // Get doctor details from state
+  const { doctor } = location.state || {};
 
-  // Set initial doctor data if passed via location.state
   useEffect(() => {
     if (doctor) {
       setDoctorFirstName(doctor.firstName);
       setDoctorLastName(doctor.lastName);
       setDepartment(doctor.doctorDepartment);
-      setDoctorFees(doctor.doctorFees || ""); // Set doctor's fee
+      setDoctorFees(doctor.doctorFees || "");
       setDoctorAvailability(doctor.doctorAvailability || []);
     }
   }, [doctor]);
 
-  // Fetch all doctors
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -105,33 +103,57 @@ const AppointmentForm = () => {
     );
 
     if (selectedDoctor) {
-      setDoctorFees(selectedDoctor.doctorFees || ""); // Update doctor's fee
+      setDoctorFees(selectedDoctor.doctorFees || "");
       setDoctorAvailability(selectedDoctor.doctorAvailability || []);
       setTimeSlot("");
     }
   };
 
+  const convertToISO = (dateString) => {
+    if (!dateString || dateString.length < 10) return ""; // Return empty if not in DD/MM/YYYY format
+    const [day, month, year] = dateString.split("/");
+    return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+  };
+
+  const handleDateChange = (e, setDateFunction) => {
+    let input = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+    if (input.length > 8) input = input.slice(0, 8); // Restrict to 8 digits (DDMMYYYY)
+
+    // Format as DD/MM/YYYY
+    let formatted = input;
+    if (input.length > 2) formatted = `${input.slice(0, 2)}/${input.slice(2)}`;
+    if (input.length > 4) formatted = `${input.slice(0, 2)}/${input.slice(2, 4)}/${input.slice(4)}`;
+
+    setDateFunction(formatted);
+  };
+
   const handleAppointment = async (e) => {
     e.preventDefault();
 
+    const isoDob = convertToISO(dob); // Convert DD/MM/YYYY to YYYY-MM-DD
+    const isoAppointmentDate = convertToISO(appointmentDate); // Convert DD/MM/YYYY to YYYY-MM-DD
+
+    if (!isoDob || !isoAppointmentDate) {
+      toast.error("Please enter valid dates for DOB and Appointment Date.");
+      return;
+    }
+
     if (paymentMethod === "Online") {
       try {
-        // ✅ Step 1: Request Order ID from Backend
         const orderResponse = await axiosInstance.post("payment/create-order", {
-          amount: doctorFees * 100, // Amount in paisa
+          amount: doctorFees * 100,
           currency: "INR",
         });
 
         const { id: order_id } = orderResponse.data;
 
-        // ✅ Step 2: Configure Razorpay Payment
         const options = {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-          amount: doctorFees * 100, // Convert to paisa
+          amount: doctorFees * 100,
           currency: "INR",
           name: "AadiCare Hospital",
           description: "Appointment Booking",
-          order_id, // ✅ Use order_id from backend
+          order_id,
           handler: async function (response) {
             try {
               const hasVisitedBool = Boolean(hasVisited);
@@ -142,9 +164,9 @@ const AppointmentForm = () => {
                   lastName,
                   email,
                   phone,
-                  dob,
+                  dob: isoDob,
                   gender,
-                  appointment_date: appointmentDate,
+                  appointment_date: isoAppointmentDate,
                   timeSlot,
                   department,
                   doctor_firstName: doctorFirstName,
@@ -187,7 +209,6 @@ const AppointmentForm = () => {
         toast.error("Failed to initiate payment.");
       }
     } else {
-      // ✅ Proceed with offline payment
       try {
         const hasVisitedBool = Boolean(hasVisited);
         const { data } = await axiosInstance.post(
@@ -197,9 +218,9 @@ const AppointmentForm = () => {
             lastName,
             email,
             phone,
-            dob,
+            dob: isoDob,
             gender,
-            appointment_date: appointmentDate,
+            appointment_date: isoAppointmentDate,
             timeSlot,
             department,
             doctor_firstName: doctorFirstName,
@@ -228,7 +249,7 @@ const AppointmentForm = () => {
   const getAvailableTimeSlots = () => {
     if (!appointmentDate || doctorAvailability.length === 0) return [];
 
-    const selectedDay = new Date(appointmentDate).toLocaleString("en-us", {
+    const selectedDay = new Date(convertToISO(appointmentDate)).toLocaleString("en-us", {
       weekday: "long",
     });
 
@@ -276,10 +297,11 @@ const AppointmentForm = () => {
         </div>
         <div>
           <input
-            type="date"
-            placeholder="Date of Birth"
+            type="text"
+            placeholder="Date of Birth (DD/MM/YYYY)"
             value={dob}
-            onChange={(e) => setDob(e.target.value)}
+            onChange={(e) => handleDateChange(e, setDob)}
+            maxLength="10"
           />
         </div>
         <div>
@@ -289,9 +311,11 @@ const AppointmentForm = () => {
             <option value="Female">Female</option>
           </select>
           <input
-            type="date"
+            type="text"
+            placeholder="Appointment Date (DD/MM/YYYY)"
             value={appointmentDate}
-            onChange={(e) => setAppointmentDate(e.target.value)}
+            onChange={(e) => handleDateChange(e, setAppointmentDate)}
+            maxLength="10"
           />
         </div>
         <div>
@@ -345,7 +369,6 @@ const AppointmentForm = () => {
           </select>
         </div>
 
-        {/* Doctor Fees Input Field */}
         <div>
           <input
             type="text"
@@ -365,8 +388,8 @@ const AppointmentForm = () => {
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-start", 
-            alignItems: "center", 
+            justifyContent: "flex-start",
+            alignItems: "center",
           }}
         >
           <label style={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -379,8 +402,6 @@ const AppointmentForm = () => {
             />
           </label>
         </div>
-
-
 
         <div>
           <p>Payment Method:</p>
@@ -403,8 +424,6 @@ const AppointmentForm = () => {
             Pay Offline
           </label>
         </div>
-
-    
 
         <button type="submit">GET APPOINTMENT</button>
       </form>
