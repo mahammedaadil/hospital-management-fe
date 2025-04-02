@@ -15,7 +15,9 @@ const Doctors = () => {
     const fetchDoctors = async () => {
       try {
         const { data } = await axiosInstance.get("/user/doctors");
-        setDoctors(data.doctors);
+        // Filter only active doctors
+        const activeDoctors = data.doctors.filter(doctor => doctor.isActive !== false);
+        setDoctors(activeDoctors);
       } catch (error) {
         console.error("Error fetching doctors:", error);
         toast.error(error.response?.data?.message || "Error fetching doctors");
@@ -24,6 +26,7 @@ const Doctors = () => {
     fetchDoctors();
   }, []);
 
+  // Filter by department (only active doctors are already in state)
   const filteredDoctors = filterDepartment === "All" 
     ? doctors 
     : doctors.filter(doc => doc.doctorDepartment === filterDepartment);
@@ -106,7 +109,7 @@ const Doctors = () => {
             </div>
           ))
         ) : (
-          <h1>No Registered Doctors Found!</h1>
+          <h1>No Active Doctors Found!</h1>
         )}
       </div>
     </section>
